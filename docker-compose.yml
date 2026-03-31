@@ -2,7 +2,7 @@ services:
   api:
     build: .
     ports:
-      - "4567:4567"
+      - "44567:4567"
     environment:
       - DATABASE_URL=postgres://metrics:metrics_password@db/metrics_db
       - RACK_ENV=development
@@ -26,7 +26,7 @@ services:
       - POSTGRES_PASSWORD=metrics_password
       - POSTGRES_DB=metrics_db
     ports:
-      - "5432:5432"
+      - "57432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U metrics -d metrics_db"]
       interval: 5s

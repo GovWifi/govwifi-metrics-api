@@ -24,8 +24,8 @@ make lint
 To run the application locally:
 ```bash
 make up
-# Then POST to localhost:4567/v1/record
-# e.g.: curl -X POST -H "Content-Type: application/json" -d '{"name":"test","value":"1.0"}' http://localhost:4567/v1/record
+# Then POST to localhost:44567/v1/record
+# e.g.: curl -X POST -H "Content-Type: application/json" -d '{"name":"test","value":"1.0"}' http://localhost:44567/v1/record
 ```
 
 To tear down:
