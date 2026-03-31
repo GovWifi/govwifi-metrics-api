@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
-source 'https://rubygems.org'
-
-ruby '3.3.11'
+source "http://rubygems.org"
+ruby File.read(".ruby-version").chomp
 
 gem 'dry-validation'
 gem 'ougai'

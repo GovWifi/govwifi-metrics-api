@@ -1,10 +1,10 @@
-FROM ruby:3.3-alpine
+FROM ruby:4.0.1-alpine
 
 RUN apk add --no-cache build-base postgresql-dev tzdata nodejs bash
 
 WORKDIR /usr/src/app
 
-COPY Gemfile Gemfile.lock* ./
+COPY .ruby-version Gemfile Gemfile.lock* ./
 RUN bundle install
 
 COPY . .
