@@ -6,7 +6,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - echo "AWS_REGION is $AWS_REGION "
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/govwifi/logging-api/$STAGE
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/govwifi/metrics-api/$STAGE
       - echo "REPOSITORY_URI is $REPOSITORY_URI"
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -24,5 +24,5 @@ phases:
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - printf '[{"name":"logging-api","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"metrics-api","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - set +x
