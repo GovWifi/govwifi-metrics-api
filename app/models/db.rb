@@ -2,6 +2,6 @@
 
 require 'sequel'
 
-ENV['DATABASE_URL'] ||= 'postgres://metrics:metrics_password@db/metrics_db'
+ENV['DATABASE_DSN'] ||= 'postgres://metrics:metrics_password@db/metrics_db'
 
-DB = Sequel.connect(ENV.fetch('DATABASE_URL', nil))
+DB = Sequel.connect(ENV.fetch('DATABASE_DSN', nil))
