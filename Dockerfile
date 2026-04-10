@@ -9,6 +9,10 @@ RUN bundle install
 
 COPY . .
 
+COPY entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
+
 EXPOSE 4567
 
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+CMD ["bundle", "exec", "puma", "-p", "8080", "--quiet", "--threads", "8:32"]
