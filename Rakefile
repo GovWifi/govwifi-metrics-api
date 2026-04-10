@@ -5,7 +5,7 @@ require 'sequel'
 namespace :db do
   desc 'Run migrations'
   task :migrate do
-    DB_URL = ENV.fetch('DATABASE_URL', 'postgres://metrics:metrics_password@db/metrics_db')
+    DB_URL = ENV.fetch('DATABASE_DSN', 'postgres://metrics:metrics_password@db/metrics_db')
     Sequel.extension :migration
     db = Sequel.connect(DB_URL)
     Sequel::Migrator.run(db, 'db/migrations')
@@ -30,7 +30,7 @@ namespace :db do
   namespace :test do
     desc 'Prepare test db'
     task :prepare do
-      ENV['DATABASE_URL'] = 'postgres://metrics:metrics_password@db/metrics_db'
+      ENV['DATABASE_DSN'] = 'postgres://metrics:metrics_password@db/metrics_db'
       Rake::Task['db:migrate'].invoke
     end
   end

@@ -4,7 +4,7 @@ services:
     ports:
       - "44567:4567"
     environment:
-      - DATABASE_URL=postgres://metrics:metrics_password@db/metrics_db
+      - DATABASE_DSN=postgres://metrics:metrics_password@db/metrics_db
       - RACK_ENV=development
     depends_on:
       db:

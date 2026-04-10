@@ -6,7 +6,7 @@ SimpleCov.start do
 end
 
 ENV['RACK_ENV'] = 'test'
-ENV['DATABASE_URL'] ||= 'postgres://metrics:metrics_password@db/metrics_db'
+ENV['DATABASE_DSN'] ||= 'postgres://metrics:metrics_password@db/metrics_db'
 
 require 'rspec'
 require 'rack/test'
