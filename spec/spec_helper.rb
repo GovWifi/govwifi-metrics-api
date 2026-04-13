@@ -7,6 +7,7 @@ end
 
 ENV['RACK_ENV'] = 'test'
 ENV['DATABASE_DSN'] ||= 'postgres://metrics:metrics_password@db/metrics_db'
+ENV['PERMITTED_HOSTS'] ||= 'localhost,example.org'
 
 require 'rspec'
 require 'rack/test'

@@ -8,6 +8,20 @@ A Ruby/Sinatra-based REST API for internal services to POST metrics data. It use
 - Composite unique index on `(name, datetime)`.
 - Implements layered design (API -> Business -> Database).
 - Managed via Docker Compose and configured by environment variables (12-factor approach).
+- **Host Authorization**: Restricts API access to a list of permitted hosts to prevent DNS rebinding attacks.
+
+## Configuration
+
+The application is configured using the following environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DATABASE_DSN` | PostgreSQL connection string | Required |
+| `PERMITTED_HOSTS` | Comma-separated list of allowed `Host` headers | `localhost` |
+| `LOG_LEVEL` | Logging level (`debug`, `info`, `warn`, `error`) | `info` |
+
+### Note on Host Authorization
+Requests with a `Host` header not present in `PERMITTED_HOSTS` will return a `403 Forbidden`. The `/health` endpoint is exempted from this check to facilitate load balancer health checks.
 
 ## Quickstart
 
@@ -38,5 +52,3 @@ This API is set up to build and test automatically via GitHub Actions in `docker
 
 ## License
 MIT
-
-
