@@ -60,6 +60,7 @@ GEM
     parser (3.3.11.1)
       ast (~> 2.4.1)
       racc
+    pg (1.6.3)
     pg (1.6.3-aarch64-linux-musl)
     pg (1.6.3-arm64-darwin)
     prism (1.9.0)
@@ -71,7 +72,7 @@ GEM
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
-    rack-session (2.1.1)
+    rack-session (2.1.2)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
     rack-test (2.2.0)
@@ -151,12 +152,14 @@ GEM
 PLATFORMS
   aarch64-linux-musl
   arm64-darwin-24
+  ruby
 
 DEPENDENCIES
   dry-validation
   ougai
   pg
   puma
+  rack-session (>= 2.1.2)
   rack-test
   rake
   rspec
