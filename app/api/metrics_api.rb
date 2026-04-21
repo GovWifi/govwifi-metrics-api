@@ -7,6 +7,12 @@ require_relative '../business/metrics_service'
 class MetricsApi < Sinatra::Base
   configure do
     set :show_exceptions, false
+
+    permitted_hosts = ENV.fetch('PERMITTED_HOSTS', 'localhost').split(',').map(&:strip).reject(&:empty?)
+    set :host_authorization, {
+      permitted_hosts: permitted_hosts,
+      allow_if: ->(env) { env['PATH_INFO'] == '/health' }
+    }
   end
 
   before do
