@@ -23,3 +23,5 @@ group :development, :test do
 end
 
 gem 'rack-session', '>= 2.1.2'
+
+gem 'rack', '>= 3.2.6'
