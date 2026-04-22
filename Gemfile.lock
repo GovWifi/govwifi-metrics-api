@@ -67,7 +67,7 @@ GEM
     puma (7.2.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.5)
+    rack (3.2.6)
     rack-protection (4.2.1)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
@@ -159,6 +159,7 @@ DEPENDENCIES
   ougai
   pg
   puma
+  rack (>= 3.2.6)
   rack-session (>= 2.1.2)
   rack-test
   rake
