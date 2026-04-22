@@ -12,6 +12,7 @@ down:
 	docker compose down -v
 
 test: up
+	mkdir -p coverage && chmod 777 coverage
 	docker compose exec -T api bundle exec rake db:test:prepare
 	docker compose exec -T api bundle exec rspec
 
