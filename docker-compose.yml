@@ -10,7 +10,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - .:/usr/src/app:cached
+      - .:/usr/src/app
     command: bundle exec puma -t 5:5 -p 4567
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4567/health"]
