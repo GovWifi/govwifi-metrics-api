@@ -40,5 +40,34 @@ class MetricsService
       AppLogger.logger.error('Error recording metric', error: e.message, params: params)
       raise
     end
+
+    def export_metrics(params)
+      from = params[:from]
+      to = params[:to]
+      year = params[:year]
+      month = params[:month]
+
+      dataset = DB[:metrics]
+
+      if from || to
+        start_time = from ? Time.parse(from).utc : nil
+        end_time = to ? Time.parse(to).utc : nil
+
+        dataset = dataset.where(Sequel.lit('datetime >= ?', start_time)) if start_time
+        dataset = dataset.where(Sequel.lit('datetime <= ?', end_time)) if end_time
+      elsif year && month
+        start_time = Time.utc(year.to_i, month.to_i, 1)
+        end_time = if month.to_i == 12
+                     Time.utc(year.to_i + 1, 1, 1)
+                   else
+                     Time.utc(year.to_i, month.to_i + 1, 1)
+                   end
+        dataset = dataset.where(datetime: start_time...end_time)
+      end
+
+      dataset.order(:datetime).all
+    rescue ArgumentError, TypeError => e
+      raise ArgumentError, "Invalid date format: #{e.message}"
+    end
   end
 end

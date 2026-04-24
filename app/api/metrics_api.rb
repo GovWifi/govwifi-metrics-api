@@ -17,7 +17,7 @@ class MetricsApi < Sinatra::Base
 
   before do
     content_type :json
-    if request.request_method == 'POST'
+    if request.request_method == 'POST' || (request.request_method == 'GET' && request.path_info == '/v1/data/export')
       api_key = ENV.fetch('API_KEY', nil)
       halt 401, { error: 'Unauthorized' }.to_json if api_key && request.env['HTTP_X_API_KEY'] != api_key
     end
@@ -49,6 +49,22 @@ class MetricsApi < Sinatra::Base
     { error: 'Invalid JSON request body' }.to_json
   rescue ArgumentError => e
     status 422
+    { error: e.message }.to_json
+  rescue StandardError
+    status 500
+    { error: 'Internal server error' }.to_json
+  end
+
+  get '/v1/data/export' do
+    results = MetricsService.export_metrics(params)
+
+    filename = Time.now.utc.strftime("%Y-%m-%d-%H-%M-%S-metrics-api-data-export.json")
+    attachment filename
+
+    status 200
+    results.to_json
+  rescue ArgumentError => e
+    status 400
     { error: e.message }.to_json
   rescue StandardError
     status 500

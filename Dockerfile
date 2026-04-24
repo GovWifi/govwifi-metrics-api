@@ -1,11 +1,17 @@
-FROM ruby:4.0.1-alpine
+FROM ruby:4.0.1-slim-bookworm
 
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache build-base postgresql-dev tzdata nodejs bash
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    tzdata \
+    nodejs \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup -g 1009 docker && \
-    adduser -u 1009 -G docker -h /usr/src/app -s /bin/sh -D docker && \
+RUN groupadd -g 1009 docker && \
+    useradd -u 1009 -g docker -d /usr/src/app -s /bin/sh docker && \
     chown -R docker:docker /usr/src/app
 
 
