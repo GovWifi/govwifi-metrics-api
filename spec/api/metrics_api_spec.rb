@@ -59,13 +59,19 @@ RSpec.describe 'Metrics API' do
       end
 
       it 'returns 201 with correct key' do
-        header 'X-API-KEY', 'secret_key'
+        header 'Authorization', 'Bearer secret_key'
         post '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
         expect(last_response.status).to eq(201)
       end
 
       it 'returns 401 with wrong key' do
-        header 'X-API-KEY', 'wrong_key'
+        header 'Authorization', 'Bearer wrong_key'
+        post '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+        expect(last_response.status).to eq(401)
+      end
+
+      it 'returns 401 with X-API-KEY (no longer supported)' do
+        header 'X-API-KEY', 'secret_key'
         post '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
         expect(last_response.status).to eq(401)
       end
@@ -119,9 +125,15 @@ RSpec.describe 'Metrics API' do
       end
 
       it 'returns 200 with correct key' do
-        header 'X-API-KEY', 'secret_key'
+        header 'Authorization', 'Bearer secret_key'
         get '/v1/data/export'
         expect(last_response.status).to eq(200)
+      end
+
+      it 'returns 401 with X-API-KEY (no longer supported)' do
+        header 'X-API-KEY', 'secret_key'
+        get '/v1/data/export'
+        expect(last_response.status).to eq(401)
       end
     end
   end

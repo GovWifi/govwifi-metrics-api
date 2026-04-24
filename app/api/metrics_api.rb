@@ -19,7 +19,11 @@ class MetricsApi < Sinatra::Base
     content_type :json
     if request.request_method == 'POST' || (request.request_method == 'GET' && request.path_info == '/v1/data/export')
       api_key = ENV.fetch('API_KEY', nil)
-      halt 401, { error: 'Unauthorized' }.to_json if api_key && request.env['HTTP_X_API_KEY'] != api_key
+      if api_key
+        auth_header = request.env['HTTP_AUTHORIZATION']
+        bearer_token = auth_header&.match(/^Bearer\s+(.+)$/i)&.[](1)
+        halt 401, { error: 'Unauthorized' }.to_json if bearer_token != api_key
+      end
     end
   end
 

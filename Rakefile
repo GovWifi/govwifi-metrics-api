@@ -80,6 +80,15 @@ namespace :db do
   end
 end
 
+namespace :auth do
+  desc 'Generate a 64-character random API key'
+  task :generate_token do
+    require 'securerandom'
+    token = SecureRandom.hex(32)
+    puts "Generated API Key: #{token}"
+  end
+end
+
 begin
   require 'rubocop/rake_task'
   RuboCop::RakeTask.new(:rubocop) do |t|
