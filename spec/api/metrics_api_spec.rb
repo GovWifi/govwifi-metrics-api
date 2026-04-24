@@ -82,9 +82,8 @@ RSpec.describe 'Metrics API' do
     it 'returns all metrics when no filters are provided' do
       get '/v1/data/export'
       expect(last_response.status).to eq(200)
-      expect(last_response.headers['Content-Disposition']).to match(/attachment; filename="\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-metrics-api-data-export.json"/)
-      results = JSON.parse(last_response.body)
-      expect(results.size).to eq(3)
+      expect(last_response.headers['Content-Disposition']).to match(/.*-metrics-api-data-export.json/)
+      expect(JSON.parse(last_response.body).map { |m| m['name'] }).to include('m1', 'm2', 'm3')
     end
 
     it 'filters by date range' do

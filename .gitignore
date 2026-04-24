@@ -6,3 +6,4 @@ coverage
 .bundle
 .gems
 .envrc
+.cache

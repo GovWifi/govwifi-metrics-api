@@ -41,6 +41,12 @@ To run the application locally:
 make up
 # Then POST to localhost:44567/v1/record
 # e.g.: curl -X POST -H "Content-Type: application/json" -d '{"name":"test","value":"1.0"}' http://localhost:44567/v1/record
+```
+
+To seed the database with two years of mock metrics data for testing:
+```bash
+make seed
+```
 
 ### Data Export
 

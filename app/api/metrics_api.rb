@@ -58,7 +58,7 @@ class MetricsApi < Sinatra::Base
   get '/v1/data/export' do
     results = MetricsService.export_metrics(params)
 
-    filename = Time.now.utc.strftime("%Y-%m-%d-%H-%M-%S-metrics-api-data-export.json")
+    filename = Time.now.utc.strftime('%Y-%m-%d-%H-%M-%S-metrics-api-data-export.json')
     attachment filename
 
     status 200

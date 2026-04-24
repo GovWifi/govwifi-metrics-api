@@ -42,32 +42,33 @@ class MetricsService
     end
 
     def export_metrics(params)
-      from = params[:from]
-      to = params[:to]
-      year = params[:year]
-      month = params[:month]
-
       dataset = DB[:metrics]
 
-      if from || to
-        start_time = from ? Time.parse(from).utc : nil
-        end_time = to ? Time.parse(to).utc : nil
-
-        dataset = dataset.where(Sequel.lit('datetime >= ?', start_time)) if start_time
-        dataset = dataset.where(Sequel.lit('datetime <= ?', end_time)) if end_time
-      elsif year && month
-        start_time = Time.utc(year.to_i, month.to_i, 1)
-        end_time = if month.to_i == 12
-                     Time.utc(year.to_i + 1, 1, 1)
-                   else
-                     Time.utc(year.to_i, month.to_i + 1, 1)
-                   end
-        dataset = dataset.where(datetime: start_time...end_time)
+      if params[:from] || params[:to]
+        dataset = apply_date_range_filter(dataset, params[:from], params[:to])
+      elsif params[:year] && params[:month]
+        dataset = apply_monthly_filter(dataset, params[:year], params[:month])
       end
 
       dataset.order(:datetime).all
     rescue ArgumentError, TypeError => e
       raise ArgumentError, "Invalid date format: #{e.message}"
+    end
+
+    private
+
+    def apply_date_range_filter(dataset, from, to)
+      dataset = dataset.where(Sequel.lit('datetime >= ?', Time.parse(from).utc)) if from
+      dataset = dataset.where(Sequel.lit('datetime <= ?', Time.parse(to).utc)) if to
+      dataset
+    end
+
+    def apply_monthly_filter(dataset, year, month)
+      year = year.to_i
+      month = month.to_i
+      start_time = Time.utc(year, month, 1)
+      end_time = month == 12 ? Time.utc(year + 1, 1, 1) : Time.utc(year, month + 1, 1)
+      dataset.where(datetime: start_time...end_time)
     end
   end
 end
