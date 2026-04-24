@@ -40,5 +40,35 @@ class MetricsService
       AppLogger.logger.error('Error recording metric', error: e.message, params: params)
       raise
     end
+
+    def export_metrics(params)
+      dataset = DB[:metrics]
+
+      if params[:from] || params[:to]
+        dataset = apply_date_range_filter(dataset, params[:from], params[:to])
+      elsif params[:year] && params[:month]
+        dataset = apply_monthly_filter(dataset, params[:year], params[:month])
+      end
+
+      dataset.order(:datetime).all
+    rescue ArgumentError, TypeError => e
+      raise ArgumentError, "Invalid date format: #{e.message}"
+    end
+
+    private
+
+    def apply_date_range_filter(dataset, from, to)
+      dataset = dataset.where(Sequel.lit('datetime >= ?', Time.parse(from).utc)) if from
+      dataset = dataset.where(Sequel.lit('datetime <= ?', Time.parse(to).utc)) if to
+      dataset
+    end
+
+    def apply_monthly_filter(dataset, year, month)
+      year = year.to_i
+      month = month.to_i
+      start_time = Time.utc(year, month, 1)
+      end_time = month == 12 ? Time.utc(year + 1, 1, 1) : Time.utc(year, month + 1, 1)
+      dataset.where(datetime: start_time...end_time)
+    end
   end
 end

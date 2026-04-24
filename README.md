@@ -4,6 +4,7 @@ A Ruby/Sinatra-based REST API for internal services to POST metrics data. It use
 
 ## Features
 - Provides an endpoint `POST /v1/record` expecting `{"name": "...", "value": 1.0, "datetime": "iso8601-optional"}`
+- Provides an endpoint `GET /v1/data/export` to retrieve metrics as JSON, with filtering options.
 - Uses Sequel as the ORM to store data in the `metrics` table.
 - Composite unique index on `(name, datetime)`.
 - Implements layered design (API -> Business -> Database).
@@ -40,6 +41,31 @@ To run the application locally:
 make up
 # Then POST to localhost:44567/v1/record
 # e.g.: curl -X POST -H "Content-Type: application/json" -d '{"name":"test","value":"1.0"}' http://localhost:44567/v1/record
+```
+
+To seed the database with two years of mock metrics data for testing:
+```bash
+make seed
+```
+
+### Data Export
+
+The endpoint `GET /v1/data/export` allows retrieving metrics in JSON format. It supports the following query parameters:
+
+- `from`: ISO8601 start datetime (e.g., `2023-10-01T00:00:00Z`).
+- `to`: ISO8601 end datetime (e.g., `2023-10-31T23:59:59Z`).
+- `year`: Filter by year (requires `month`).
+- `month`: Filter by month (requires `year`).
+
+**Example usage:**
+
+```bash
+# Export all metrics for October 2023
+curl -H "X-API-KEY: your_api_key" "http://localhost:44567/v1/data/export?year=2023&month=10"
+
+# Export metrics in a specific range
+curl -H "X-API-KEY: your_api_key" "http://localhost:44567/v1/data/export?from=2023-10-27T00:00:00Z&to=2023-10-27T23:59:59Z"
+```
 ```
 
 To tear down:

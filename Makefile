@@ -1,4 +1,4 @@
-.PHONY: build up down test lint migrate shell
+.PHONY: build up down test lint migrate shell seed
 
 build:
 	docker compose build
@@ -17,7 +17,13 @@ test: up
 	docker compose exec -T api bundle exec rspec
 
 lint: build up
-	docker compose exec -T api bundle exec rubocop -A
+	docker compose exec -T api bundle exec rubocop --cache false
+
+lint-fix: build up
+	docker compose exec -T api bundle exec rubocop -A --cache false
 
 shell:
 	docker compose exec api bash
+
+seed: up
+	docker compose exec -T api bundle exec rake db:seed_metrics
