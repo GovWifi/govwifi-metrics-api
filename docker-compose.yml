@@ -3,6 +3,8 @@ services:
     build: .
     ports:
       - "44567:4567"
+    env_file:
+      - .env
     environment:
       - DATABASE_DSN=postgres://metrics:metrics_password@db/metrics_db
       - RACK_ENV=development
