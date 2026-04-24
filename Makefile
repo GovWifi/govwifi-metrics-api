@@ -27,3 +27,6 @@ shell:
 
 seed: up
 	docker compose exec -T api bundle exec rake db:seed_metrics
+
+generate_api_token: up
+	docker compose exec -T api bundle exec rake auth:generate_token

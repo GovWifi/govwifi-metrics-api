@@ -18,6 +18,7 @@ The application is configured using the following environment variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `DATABASE_DSN` | PostgreSQL connection string | Required |
+| `API_KEY` | Shared secret for Bearer token authentication | Required |
 | `PERMITTED_HOSTS` | Comma-separated list of allowed `Host` headers | `localhost` |
 | `LOG_LEVEL` | Logging level (`debug`, `info`, `warn`, `error`) | `info` |
 
@@ -48,6 +49,11 @@ To seed the database with two years of mock metrics data for testing:
 make seed
 ```
 
+To generate a 64-character random API key for securing the API:
+```bash
+make generate_api_token
+```
+
 ### Data Export
 
 The endpoint `GET /v1/data/export` allows retrieving metrics in JSON format. It supports the following query parameters:
@@ -61,10 +67,10 @@ The endpoint `GET /v1/data/export` allows retrieving metrics in JSON format. It 
 
 ```bash
 # Export all metrics for October 2023
-curl -H "X-API-KEY: your_api_key" "http://localhost:44567/v1/data/export?year=2023&month=10"
+curl -H "Authorization: Bearer your_api_key" "http://localhost:44567/v1/data/export?year=2023&month=10"
 
 # Export metrics in a specific range
-curl -H "X-API-KEY: your_api_key" "http://localhost:44567/v1/data/export?from=2023-10-27T00:00:00Z&to=2023-10-27T23:59:59Z"
+curl -H "Authorization: Bearer your_api_key" "http://localhost:44567/v1/data/export?from=2023-10-27T00:00:00Z&to=2023-10-27T23:59:59Z"
 ```
 ```
 
