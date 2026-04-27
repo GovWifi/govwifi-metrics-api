@@ -19,13 +19,13 @@ The application is configured using the following environment variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `DATABASE_DSN` | PostgreSQL connection string | Required |
-| `API_KEY` | Shared secret for Bearer token authentication | Required |
+| `METRICS_API_KEY` | Shared secret for Bearer token authentication | Required |
 | `PERMITTED_HOSTS` | Comma-separated list of allowed `Host` headers | `localhost` |
 | `LOG_LEVEL` | Logging level (`debug`, `info`, `warn`, `error`) | `info` |
 
 ### Note on Host Authorization
 
-If the API_KEY is not set in the environment then not authorisation checks will be performed. This is used to aid the automated CI/CD testing.
+If the METRICS_API_KEY is not set in the environment then not authorisation checks will be performed. This is used to aid the automated CI/CD testing.
 
 Requests with a `Host` header not present in `PERMITTED_HOSTS` will return a `403 Forbidden`. The `/health` endpoint is exempted from this check to facilitate load balancer health checks.
 
