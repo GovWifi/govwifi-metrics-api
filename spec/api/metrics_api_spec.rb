@@ -48,9 +48,9 @@ RSpec.describe 'Metrics API' do
       expect(last_response.status).to eq(400)
     end
 
-    context 'with API_KEY authentication' do
+    context 'with METRICS_API_KEY authentication' do
       before do
-        allow(ENV).to receive(:fetch).with('API_KEY', nil).and_return('secret_key')
+        allow(ENV).to receive(:fetch).with('METRICS_API_KEY', nil).and_return('secret_key')
       end
 
       it 'returns 401 without key' do
@@ -114,9 +114,9 @@ RSpec.describe 'Metrics API' do
       expect(JSON.parse(last_response.body)).to include('error' => /Invalid date format/)
     end
 
-    context 'with API_KEY authentication' do
+    context 'with METRICS_API_KEY authentication' do
       before do
-        allow(ENV).to receive(:fetch).with('API_KEY', nil).and_return('secret_key')
+        allow(ENV).to receive(:fetch).with('METRICS_API_KEY', nil).and_return('secret_key')
       end
 
       it 'returns 401 without key' do
