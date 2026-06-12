@@ -114,6 +114,48 @@ RSpec.describe 'Metrics API' do
       expect(JSON.parse(last_response.body)).to include('error' => /Invalid date format/)
     end
 
+    it 'filters by name only' do
+      get '/v1/data/export', name: 'm1'
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body).map { |m| m['name'] }).to eq(['m1'])
+    end
+
+    it 'filters by name when inside target date range' do
+      get '/v1/data/export', name: 'm2', from: '2023-01-15T00:00:00Z', to: '2023-02-15T00:00:00Z'
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body).map { |m| m['name'] }).to eq(['m2'])
+    end
+
+    it 'returns empty when name does not match target date range' do
+      get '/v1/data/export', name: 'm1', from: '2023-01-15T00:00:00Z', to: '2023-02-15T00:00:00Z'
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body)).to eq([])
+    end
+
+    it 'filters by name when inside target year and month' do
+      get '/v1/data/export', name: 'm2', year: '2023', month: '02'
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body).map { |m| m['name'] }).to eq(['m2'])
+    end
+
+    it 'returns empty when name does not match target year and month' do
+      get '/v1/data/export', name: 'm1', year: '2023', month: '02'
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body)).to eq([])
+    end
+
+    it 'returns empty array if name does not exist' do
+      get '/v1/data/export', name: 'non-existent'
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body)).to eq([])
+    end
+
+    it 'ignores name if name is empty or pure whitespace' do
+      get '/v1/data/export', name: ' '
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body).size).to eq(3)
+    end
+
     context 'with METRICS_API_KEY authentication' do
       before do
         allow(ENV).to receive(:fetch).with('METRICS_API_KEY', nil).and_return('secret_key')
