@@ -43,19 +43,34 @@ class MetricsService
 
     def export_metrics(params)
       dataset = DB[:metrics]
-
-      if params[:from] || params[:to]
-        dataset = apply_date_range_filter(dataset, params[:from], params[:to])
-      elsif params[:year] && params[:month]
-        dataset = apply_monthly_filter(dataset, params[:year], params[:month])
-      end
-
+      dataset = apply_filters(dataset, params)
       dataset.order(:datetime).all
     rescue ArgumentError, TypeError => e
       raise ArgumentError, "Invalid date format: #{e.message}"
     end
 
     private
+
+    def apply_filters(dataset, params)
+      dataset = apply_time_filters(dataset, params)
+      apply_name_filter(dataset, params[:name])
+    end
+
+    def apply_time_filters(dataset, params)
+      if params[:from] || params[:to]
+        apply_date_range_filter(dataset, params[:from], params[:to])
+      elsif params[:year] && params[:month]
+        apply_monthly_filter(dataset, params[:year], params[:month])
+      else
+        dataset
+      end
+    end
+
+    def apply_name_filter(dataset, name)
+      return dataset if name.to_s.strip.empty?
+
+      dataset.where(name: name)
+    end
 
     def apply_date_range_filter(dataset, from, to)
       dataset = dataset.where(Sequel.lit('datetime >= ?', Time.parse(from).utc)) if from
