@@ -30,3 +30,5 @@ gem 'rack', '>= 3.2.6'
 gem 'oj', '>= 3.17.3'
 
 gem 'concurrent-ruby', '>= 1.3.7'
+
+gem 'json', '>= 2.19.9'
