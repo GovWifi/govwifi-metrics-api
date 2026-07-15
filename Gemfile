@@ -6,7 +6,7 @@ ruby File.read('.ruby-version').chomp
 gem 'dry-validation'
 gem 'ougai'
 gem 'pg'
-gem 'puma'
+gem 'puma', '>= 7.2.1'
 gem 'rake'
 gem 'sequel'
 gem 'sinatra'
