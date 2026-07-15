@@ -50,7 +50,7 @@ GEM
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.7.5)
-    oj (3.16.16)
+    oj (3.17.4)
       bigdecimal (>= 3.0)
       ostruct (>= 0.2)
     ostruct (0.6.3)
@@ -156,6 +156,7 @@ PLATFORMS
 
 DEPENDENCIES
   dry-validation
+  oj (>= 3.17.3)
   ougai
   pg
   puma
