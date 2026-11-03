@@ -17,7 +17,8 @@ class MetricsApi < Sinatra::Base
 
   before do
     content_type :json
-    if request.request_method == 'POST' || (request.request_method == 'GET' && request.path_info == '/v1/data/export')
+    if %w[POST PUT].include?(request.request_method) ||
+       (request.request_method == 'GET' && request.path_info == '/v1/data/export')
       api_key = ENV.fetch('METRICS_API_KEY', nil)
       if api_key
         auth_header = request.env['HTTP_AUTHORIZATION']
@@ -48,6 +49,24 @@ class MetricsApi < Sinatra::Base
 
     status 201
     { message: 'Metric recorded successfully' }.to_json
+  rescue JSON::ParserError
+    status 400
+    { error: 'Invalid JSON request body' }.to_json
+  rescue ArgumentError => e
+    status 422
+    { error: e.message }.to_json
+  rescue StandardError
+    status 500
+    { error: 'Internal server error' }.to_json
+  end
+
+  put '/v1/record' do
+    data = JSON.parse(request.body.read)
+
+    MetricsService.update_metric(data)
+
+    status 200
+    { message: 'Metric updated successfully' }.to_json
   rescue JSON::ParserError
     status 400
     { error: 'Invalid JSON request body' }.to_json
