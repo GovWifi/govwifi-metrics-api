@@ -41,6 +41,41 @@ class MetricsService
       raise
     end
 
+    def update_metric(params)
+      contract = MetricsContract.new
+      result = contract.call(params)
+
+      if result.failure?
+        AppLogger.logger.warn('Validation failed', errors: result.errors.to_h, params: params)
+        raise ArgumentError, result.errors.to_h.map { |k, v| "#{k} #{v.join(', ')}" }.join('; ')
+      end
+
+      data = result.to_h
+      name = data[:name]
+      value = Float(data[:value])
+      datetime = data[:datetime]
+
+      metric_datetime = if datetime.to_s.strip.empty?
+                          Time.now.utc
+                        else
+                          Time.parse(datetime).utc
+                        end
+
+      updated_rows = DB[:metrics].where(name: name, datetime: metric_datetime).update(value: value)
+      if updated_rows.zero?
+        DB[:metrics].insert(
+          name: name,
+          value: value,
+          datetime: metric_datetime
+        )
+      end
+
+      AppLogger.logger.info('Metric updated', name: name, value: value, datetime: metric_datetime)
+    rescue StandardError => e
+      AppLogger.logger.error('Error updating metric', error: e.message, params: params)
+      raise
+    end
+
     def export_metrics(params)
       dataset = DB[:metrics]
       dataset = apply_filters(dataset, params)

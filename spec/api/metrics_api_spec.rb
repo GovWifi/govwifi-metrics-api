@@ -78,6 +78,73 @@ RSpec.describe 'Metrics API' do
     end
   end
 
+  describe 'PUT /v1/record' do
+    let(:valid_payload) do
+      {
+        name: 'service-report-peap-unique-users-rolling-count',
+        value: '42',
+        datetime: '2026-07-17T00:00:00Z'
+      }
+    end
+
+    it 'updates an existing metric record successfully' do
+      DB[:metrics].insert(name: valid_payload[:name], value: 100.0, datetime: Time.parse(valid_payload[:datetime]).utc)
+      put '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+      expect(last_response.status).to eq(200)
+      expect(DB[:metrics].where(name: valid_payload[:name]).get(:value)).to eq(42.0)
+    end
+
+    it 'inserts the metric record if it does not already exist' do
+      put '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+      expect(last_response.status).to eq(200)
+      expect(JSON.parse(last_response.body)).to eq({ 'message' => 'Metric updated successfully' })
+      expect(DB[:metrics].where(name: valid_payload[:name]).get(:value)).to eq(42.0)
+    end
+
+    it 'returns 422 for missing name' do
+      payload = { value: '42' }
+      put '/v1/record', payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+
+      expect(last_response.status).to eq(422)
+    end
+
+    it 'returns 400 for bad JSON' do
+      put '/v1/record', 'invalid json', { 'CONTENT_TYPE' => 'application/json' }
+      expect(last_response.status).to eq(400)
+    end
+
+    it 'returns 500 when an unexpected error occurs' do
+      allow(MetricsService).to receive(:update_metric).and_raise(StandardError, 'DB failure')
+
+      put '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+      expect(last_response.status).to eq(500)
+      expect(JSON.parse(last_response.body)).to eq({ 'error' => 'Internal server error' })
+    end
+
+    context 'with METRICS_API_KEY authentication' do
+      before do
+        allow(ENV).to receive(:fetch).with('METRICS_API_KEY', nil).and_return('secret_key')
+      end
+
+      it 'returns 401 without key' do
+        put '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+        expect(last_response.status).to eq(401)
+      end
+
+      it 'returns 200 with correct key' do
+        header 'Authorization', 'Bearer secret_key'
+        put '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'returns 401 with wrong key' do
+        header 'Authorization', 'Bearer wrong_key'
+        put '/v1/record', valid_payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+        expect(last_response.status).to eq(401)
+      end
+    end
+  end
+
   describe 'GET /v1/data/export' do
     before do
       DB[:metrics].insert(name: 'm1', value: 1.0, datetime: '2023-01-01T10:00:00Z')
