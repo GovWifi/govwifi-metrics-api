@@ -6,6 +6,7 @@ services:
     environment:
       - DATABASE_DSN=postgres://metrics:metrics_password@db/metrics_db
       - RACK_ENV=development
+      - PERMITTED_HOSTS=localhost,host.docker.internal
     depends_on:
       db:
         condition: service_healthy
